@@ -95,6 +95,31 @@ We'll be covering
 
 ---
 
+# Stata vs. R ([_ref_](https://epirhandbook.com/en/transition-to-r.html))
+
+| Stata | R |
+|---|---|
+| Stata is a proprietary, licensed software and can be expensive | R is open-source and free |
+| Only one dataset can be in memory at a time | Multiple datasets can be manipulated and used simultaneously |
+| Limited to built-in and user-created .ado files for extending functionality | A vast ecosystem of packages available through CRAN and GitHub |
+| Graphic capabilities, while adequate, are not as flexible or customizable | Advanced graphical packages (e.g., ggplot2) offer high-quality and customizable visualizations |
+| Stata's community, while active, is smaller and less diverse | Larger and more active user community leading to more resources, solutions, and online help |
+| Limited advanced programming capabilities | Offers advanced programming constructs like functions, lists, and apply functions for better automation |
+
+---
+
+# Learning tools
+
+- [R for Data Science](https://r4ds.had.co.nz/) by Grolemund and Wickham
+
+- [ChatGPT](https://chat.openai.com/?model=gpt-4) (especially GPT4)
+
+- [Stackoverflow](https://stackoverflow.com/)
+
+- There is usually an R book for almost everything (see [here](https://github.com/maxto/R-Books)).
+
+---
+
 # Type of R files
 
 ### R Projects (.Rproj)
@@ -174,6 +199,22 @@ In Stata, this would be similar to:
 ```
 // function_name argument_1 argument_2, parameter 1
 ```
+--
+
+For instance,
+
+
+```stata
+# Stata code
+gen new_var = old_var * 2
+```
+
+
+```r
+# R code
+df &lt;- dplyr::mutate(df, new_var = old_var * 2)
+```
+
 
 ---
 
@@ -183,14 +224,27 @@ While there are lots of options, I recommend loading data using the following fu
 
 
 ```r
-readr::read_csv()
-haven::read_dta()
-openxlsx::read.xlsx()
+readr::read_csv("data.csv")
+haven::read_dta("data.dta")
+openxlsx::read.xlsx("data.xlsx")
 ```
 
 **readr** and **haven** are both part of the "_tidyverse_", a bundle of packages that contain the most essential functions for data wrangling.
 
 **openxlsx** is a standalone package that deals with reading and writing Excel files.
+
+--
+
+In Stata, the equivalent commands are:
+
+
+```stata
+import delimited using "data.csv"
+use "data.dta"
+import excel using "data.xlsx", firstrow
+
+```
+
 
 ---
 
@@ -296,6 +350,15 @@ x &lt;- (1+1) * 2^3 / 4 - 2
 ```
 
 In our data's case, the results of reading the CSV file are assigned to the `dat` symbol.
+
+In STATA, the closest action is to generate a variable called `x` in the current dataset. But what the R code does is to create x as a vector of 1 instead of a data frame.
+
+
+```stata
+# Stata code
+gen x = (1+1) * 2^3 / 4 - 2
+```
+
 
 ]
 
@@ -505,6 +568,22 @@ In this workshop, **we recommend using the dplyr package in tidyverse**, but we 
 ]
 
 It's  apparent that tidyverse has a much more consistent and readable syntax than base R.
+
+--
+
+The equivalent commands in Stata are:
+
+.font10[
+
+
+```stata
+keep treated
+keep if treated == 1
+sort std_scores
+collapse (mean) avg_scores = std_scores
+gen failed = std_scores &lt; 0
+```
+]
 
 ---
 
