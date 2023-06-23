@@ -1,12 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Data Team Workshops
+# Youth Impact R Workshops
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-Welcome to the Data Team workshops page! If you want to learn R or use
+Welcome! If you want to learn R or use
 the tools in our data pipeline, you’ve come to the right place. Over
 time we’ll add more and more tutorials to cover a breadth of topics so
 that you can explore the R ecosystem and see how it could benefit your
@@ -16,7 +16,7 @@ workflow.
 
 Much of our R tutorials are based on the exceptionally handy [*R for
 Data Science*](https://r4ds.had.co.nz/) by Grolemund and Wickham. Rather
-than following a standard “computer science”-like approach of teaching
+than following a standard "computer science"-like approach of teaching
 the language fundamentals without application, Grolemund and Wickham
 take an application-first approach by going through the basics of data
 import, munging, and analysis while teaching the language on the side.
@@ -36,17 +36,7 @@ with R!
 
 # Workshop Recordings
 
-Access to all recordings requires an NYU login (choose the “Sign in with
-SSO” button)
-
-1.  [Session 1: Getting to Know Your
-    Data](https://nyu.zoom.us/rec/share/VLku7fo5upo3bVs8xdS8K92Q2UPwzrfzCHUxVGPCJh6XZtQqLGlElp2H4aUvEQr3.NghErP0lw2NxupVV)
-2.  [Session 2: Finding Relationships in Your
-    Data](https://nyu.zoom.us/rec/share/zSF42XLuzubrBt9fwP2sMPriZvSAp9uq4hU5Qdc1CZI6TjZ6Vu7Cle-Id1Pny54r.cO3UymskhDJVXyWr)
-3.  [Session 3: Making R Work for
-    You](https://nyu.zoom.us/rec/share/55nw_SkaeuhaCXAtZSNbCemnwi9trTvgKLiSKNjaoEew8Qb7mb3UTwKE6eT7rRyg.sg0ApiMqrMhP7B_D)
-4.  [Session 4: Workflows in R – Recommended
-    practices](https://nyu.zoom.us/rec/share/w1QiqFhfCjfSkPvrUjobg4_1xERFT3_v6FO9RjvggmfNzdjbG-TTpWYZtKfJvRD4.NHpuJlT-HIR-qihP)
+...
 
 # Setup
 
