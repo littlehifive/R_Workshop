@@ -12,27 +12,9 @@ time we’ll add more and more tutorials to cover a breadth of topics so
 that you can explore the R ecosystem and see how it could benefit your
 workflow.
 
-## Tutorial References
+## Recommended Learning Materials
 
-Much of our R tutorials are based on the exceptionally handy [*R for
-Data Science*](https://r4ds.had.co.nz/) by Grolemund and Wickham. Rather
-than following a standard "computer science"-like approach of teaching
-the language fundamentals without application, Grolemund and Wickham
-take an application-first approach by going through the basics of data
-import, munging, and analysis while teaching the language on the side.
-For extra reading and exercises, we highly encourage perusing this text.
-
-Once you feel comfortable working with R, the [RStudio
-cheatsheets](https://rstudio.com/resources/cheatsheets/) are an
-invaluable resource when you need some form of quick reference. The
-sheets are designed so that you can *visually* understand what the
-functions are doing, which builds a stronger intuition than just reading
-the function documentation.
-
-For working with regular expressions, I highly recommend
-[regex101](https://regex101.com). Do note that you *don’t* need to
-escape your backslashes on this platform, but you *do* need to do so
-with R!
+[*R for Data Science*](https://r4ds.had.co.nz/) by Grolemund and Wickham.
 
 # Workshop Recordings
 
@@ -67,7 +49,7 @@ basics just to get you started:
     application takes care of most git workflow tasks.
 2.  Once installed, open Github Desktop, navigate to the menu, and
     select `File > Clone Repository...`.
-3.  In the dialog box that pops up, select the “URL” tab, and put
+3.  In the dialog box that pops up, select the "URL"" tab, and put
     “Global-TIES-for-Children/workshops” into the “Repository URL or
     GitHub username and repository” field. Choose whichever local path
     that you want.
@@ -86,8 +68,8 @@ to set up this repository:
     words, you write code using RStudio, and then you run your code
     in R.
 2.  Navigate to where you downloaded this repository, and open
-    `workshops.Rproj` with RStudio (double-clicking the file should do).
-3.  In the “Console” tab that should appear in the left pane, run these
+    `R_Workshop.Rproj` with RStudio (double-clicking the file should do).
+3.  In the "Console" tab that should appear in the left pane, run these
     two commands in order:
 
 ``` r
