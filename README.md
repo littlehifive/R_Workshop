@@ -36,7 +36,7 @@ Github provides downloadable ZIP archives of entire repositories for
 ease of use. Use the “Download ZIP” menu item via the “Code” button
 shown below:
 
-![](man/figures/github-download-zip.png)
+![](man/figures/github-download.png)
 
 Extract the ZIP in a folder you remember, and you’ll be all set.
 
@@ -54,7 +54,7 @@ basics just to get you started:
     GitHub username and repository” field. Choose whichever local path
     that you want.
 
-![Clone repository box](man/figures/clone-repository-zip.png)
+![Clone repository box](man/figures/clone-repository.png)
 
 ## 2 - Get Set Up
 
