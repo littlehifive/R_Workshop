@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Session 1</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Youth Impact R Workshop Series" />
+    <script src="01-import-wrangle_files/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Session 1
+]
+.subtitle[
+## Data Wrangling in R
+]
+.author[
+### Youth Impact R Workshop Series
+]
+.institute[
+### Zezhen Wu
+]
+
+---
+
+
+
+
+
+
+&lt;style&gt;
+:root {
+  --font12: 12pt;
+  --font10: 10pt;
+}
+
+.font12 &gt; table {
+  font-size: var(--font12);
+}
+
+.font12 &gt; p {
+  font-size: var(--font12);
+}
+
+.font12 &gt; pre .remark-code-line {
+  font-size: var(--font12);
+}
+
+.font10 &gt; table {
+  font-size: var(--font10);
+}
+
+.font10 &gt; p {
+  font-size: var(--font10);
+}
+
+.font10 &gt; pre .remark-code-line {
+  font-size: var(--font10);
+}
+&lt;/style&gt;
+
+# Disclaimer
+
+Part of this presentation is borrowed from the public [GitHub repository](https://github.com/nyuglobalties/workshops) for the NYU Global TIES R workshop coauthored by Patrick Anker and Zezhen Wu.
+
+---
+
+# Agenda
+
+By the end of this workshop, you should be able to understand the following code:
+
+
+```r
+library(tidyverse)
+
+dat &lt;- read_csv(here::here("data/RCT.csv"))
+
+dat %&gt;%
+  filter(age &lt;= 10) %&gt;%
+  group_by(sch_id) %&gt;% 
+  summarize(avg_scores = mean(std_scores)) %&gt;% 
+  mutate(transformed_scores = as.numeric(scale(avg_scores))) %&gt;% 
+  select(-avg_scores)
+```
+
+We'll be covering
+
+- Basic R syntax
+- Data loading
+- Data inspection
+- Data manipulation
+
+---
+
+# Type of R files
+
+### R Projects (.Rproj)
+
+- Organize work in a structured manner with relative path.
+- Provide a dedicated workspace for each project.
+
+### R Script (.R)
+
+- Plain text files containing R code.
+- Executed directly or sourced within other scripts or documents.
+
+### R Markdown (.Rmd)
+
+- Combine R code, text, and output.
+- Create dynamic documents.
+
+--
+
+**We will talk about data workflow management in a future workshop.**
+
+**Let's try to create these files by hand!**
+
+---
+class: middle, center
+
+# Loading your data
+
+## 🗄➡ 💻
+
+---
+
+## Understanding R syntax
+
+R is built around **functions**, bits of atomic code that accept inputs and return an output.
+
+--
+
+A function looks like this:
+
+
+```r
+function_name(argument_1, argument_2, parameter = TRUE)
+```
+
+--
+
+Functions can be bundled together and shared using **packages**. To access a function from a specific package, we use the `::` operator.
+
+
+```r
+package.name::function_name(argument_1, argument_2, parameter = TRUE)
+```
+
+---
+
+## Understanding R syntax
+
+--
+
+It may be cumbersome to write `::` each time you use a function. Therefore, R allows you to load those packages in your current session using the `library()` function so you can just refer to the function name without `::`.
+
+--
+
+
+```r
+library(package.name)
+
+# Refers to `function_name` in `package.name`
+function_name(argument_1, argument_2, parameter = TRUE)
+```
+
+--
+
+In Stata, this would be similar to:
+
+```
+// function_name argument_1 argument_2, parameter 1
+```
+
+---
+
+# Tools for loading data
+
+While there are lots of options, I recommend loading data using the following functions:
+
+
+```r
+readr::read_csv()
+haven::read_dta()
+openxlsx::read.xlsx()
+```
+
+**readr** and **haven** are both part of the "_tidyverse_", a bundle of packages that contain the most essential functions for data wrangling.
+
+**openxlsx** is a standalone package that deals with reading and writing Excel files.
+
+---
+
+
+# Tools for loading data
+
+--
+
+Some packages come with the installation of R, some don't. This is because R is an open-source software, and anyone in the world can contribute their packages to the R community.
+
+--
+
+To use these packages, you need to install them first by running `install.packages("package.name")`:
+
+```r
+install.packages("tidyverse")
+install.packages("haven")
+```
+
+**Note:** Only run these commands **once**. Once they're installed, you don't need to run that command again since the package will be on your computer.
+
+---
+
+# Finding help on packages
+
+R packages are typically published on [CRAN](https://cran.r-project.org/web/packages/available_packages_by_name.html) (The Comprehensive R Archive Network).
+
+Developer versions of R packages are typically published on GitHub (for instance, [`readr`](https://github.com/tidyverse/readr)).
+
+When you encounter a function that you don't know or understand for some reason, **consult the R help system**!
+
+--
+
+
+```r
+# search help doc for a package
+?readr
+
+# search help doc for a function in a package
+?readr::read_csv
+
+# If you're not certain what a function name is or you're looking for a certain topic, use `??` (think: "wildcard search") followed by the topic name
+??readr::read_table
+```
+
+---
+
+
+# Let's load our data!
+
+The simulated RCT dataset is located in the `data` directory (folder) at the root of this project. I'll use the **here** package to create paths that are _relative to the project root_.
+
+--
+
+I'll attach the packages we need for now:
+
+
+```r
+library(readr)
+library(here)
+```
+
+```
+## here() starts at /Users/michaelfive/Desktop/R Directory/R_Workshop
+```
+
+Note how **here** tells us where it thinks the project root is! It recursively searches upward for a directory with a `DESCRIPTION` or `.Rproj` file. 
+
+**here** is very handy utility for reproducibility since it _localizes_ paths to the project -- and not expanding to the full path on _your_ computer.
+
+---
+
+# Let's load our data!
+
+Time to load the data:
+
+
+```r
+dat &lt;- read_csv(here("data/RCT.csv"))
+```
+
+```
+## Rows: 1000 Columns: 6
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: ","
+## dbl (6): sch_id, st_id, treated, age, female, std_scores
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+---
+
+## Two things to note
+
+.pull-left[
+
+R uses the `&lt;-` operator to _assign_ values to symbols (variables). 
+
+
+```r
+x &lt;- (1+1) * 2^3 / 4 - 2
+```
+
+In our data's case, the results of reading the CSV file are assigned to the `dat` symbol.
+
+]
+
+.pull-right[
+
+Unlike Stata, you can have multiple data frames in one R session.
+
+
+```r
+dat1 &lt;- dat
+dat2 &lt;- dat
+```
+
+This is very helpful in cross-checking and merging datasets, as well as interacting with various R objects (e.g., vectors, matrices, lists, data frames, etc.).
+
+]
+
+---
+
+# Looking at our data
+
+After loading our data, it's useful to high-level view of its content to make sure that it loaded correctly.
+
+We'll use the `str()` and `print()` functions here, both part of base R.
+
+---
+
+# Looking at our data
+
+
+
+
+```r
+str(dat)
+```
+
+```
+## spc_tbl_ [1,000 × 6] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ sch_id    : num [1:1000] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ st_id     : num [1:1000] 1 2 3 4 5 6 7 8 9 10 ...
+##  $ treated   : num [1:1000] 0 1 0 1 1 1 0 1 1 1 ...
+##  $ age       : num [1:1000] 8 10 12 7 11 11 9 9 9 9 ...
+##  $ female    : num [1:1000] 0 0 0 0 0 0 0 0 1 0 ...
+##  $ std_scores: num [1:1000] -0.159 -0.578 -0.807 0.163 -0.621 ...
+##  - attr(*, "problems")=&lt;externalptr&gt;
+```
+
+```r
+class(dat)
+```
+
+```
+## [1] "spec_tbl_df" "tbl_df"      "tbl"         "data.frame"
+```
+
+---
+
+# Looking at our data
+
+The _class_ of this `dat` object is a `data.frame`. `data.frame`s are R's representation of tabular data. `dat` is also a `tbl_df` ("tibble"), which is the Tidyverse's version of a `data.frame` that is a little bit more stringent (i.e. safe) than base R's version, and it has a prettier `print()` method:
+
+
+```r
+print(dat)
+```
+
+```
+## # A tibble: 1,000 × 6
+##    sch_id st_id treated   age female std_scores
+##     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+##  1      1     1       0     8      0     -0.159
+##  2      1     2       1    10      0     -0.578
+##  3      1     3       0    12      0     -0.807
+##  4      1     4       1     7      0      0.163
+##  5      1     5       1    11      0     -0.621
+##  6      1     6       1    11      0     -0.643
+##  7      1     7       0     9      0     -0.337
+##  8      1     8       1     9      0     -0.345
+##  9      1     9       1     9      1      0.160
+## 10      1    10       1     9      0     -0.248
+## # ℹ 990 more rows
+```
+
+---
+
+# Looking at our data
+
+If you'd like to see _all_ of your data in a pretty Excel-like spreadsheet, use the `View()` function which has a great display in RStudio.
+
+
+```r
+View(dat)
+```
+
+Note: Or you can click on the data frame in the Environment tab. Or hold command/ctrl and click `dat` on the R script.
+
+---
+
+# Data types in R
+
+You may have noticed a bunch of three-letter abbreviations next to the variable names in `print(dat)` and the variable content in `str(dat)`. These are the _type signatures_ for each variable:
+
+- Double (`dbl` / `num`): All real numbers, like `\(50\)`, `\(23.193\)`, or `\(1.24\times10^{-8}\)`
+- Character (`chr`): Text/strings, written with single- or double-quotes (e.g. `"a string"`)
+
+There are a couple more that you will encounter regularly:
+
+- Integer (`int`): Integers and counting numbers. No decimals and scientific notation here!
+- Logical (`lgl`): Boolean data, written as `TRUE` or `FALSE`.
+- Factor (`fct`): Factors, R's representation of categorical data. They look like character data with `print()`, but under the hood they are integers. These should only exist in cleaned, ready-for-analysis data!
+
+---
+
+# Quiz
+
+.pull-left[
+
+How do I create a variable `x` that refers to the sentence "Hello, world!" ?
+
+]
+
+.pull-right[
+
+Use 1, 2, 3, or 4 to refer to the code line number.
+
+
+```r
+x "Hello, world!"
+"x" &lt;- Hello, world!
+x &lt;- "Hello, world!"
+x &lt;- Hello, world!
+```
+
+]
+
+---
+
+# Quiz
+
+.pull-left[
+
+How do I create a variable `x` that refers to the sentence "Hello, world!" ?
+
+]
+
+.pull-right[
+
+Use 1, 2, 3, or 4 to refer to the code line number.
+
+
+```r
+x "Hello, world!"
+"x" &lt;- Hello, world!
+*x &lt;- "Hello, world!"
+x &lt;- Hello, world!
+```
+
+]
+
+---
+class: middle, center
+
+# Working with your data
+
+## 🗄🔍
+
+---
+
+# Working with your data
+
+What we'll be discussing today is basic *data wrangling*.
+
+&gt; Data wrangling (n.): The process of transforming data from one raw form into another format with the intent of making it more appropriate and valuable for a variety of downstream purposes such as analytics.
+&gt; 
+&gt; &lt;em&gt;&amp;mdash;Wikipedia&lt;/em&gt;
+
+---
+
+# Basic Data Wrangling
+
+Most data wrangling comes down to **five** basic operations:
+
+- **Selecting**: Selecting or deselcting variables 
+- **Filtering**: Filtering by row
+- **Arranging**: Reordering by variables
+- **Summarizing**: Aggregating data for summary statistics
+- **Mutating**: Creating, editing, or deleting variables
+
+You can also **Group** these operations by variables. For example, finding the average math score in each class would be achieved by _grouping_ by class and then _summarizing_ by taking the mean.
+
+---
+
+# Basic Data Wrangling
+
+In this workshop, **we recommend using the dplyr package in tidyverse**, but we can also achieve the same thing in base R:
+
+.font12[
+
+| Operation   |                                       Tidyverse |                                    Base R       |
+|:------------|------------------------------------------------:|------------------------------------------------:|
+| Selecting   | `select(dat, treated)`                          | `dat[,"treated"]`                               |
+| Filtering   | `filter(dat, treated == 1)`                     | `dat[dat$treated == 1", ]`                      |
+| Arranging   | `arrange(dat, std_scores)`                      | `dat[order(dat$std_scores), ]`                  |
+| Summarizing | `summarize(dat, avg_scores = mean(std_scores))` | `data.frame(avg_scores = mean(dat$std_scores))` |
+| Mutating    | `mutate(dat, failed = std_scores &lt; 0)`          | `dat$failed &lt;- dat$std_scores &lt; 0`              |
+
+]
+
+It's  apparent that tidyverse has a much more consistent and readable syntax than base R.
+
+---
+
+# Basic Data Wrangling
+
+All of these tidyverse functions are provided by the **dplyr** package.
+
+
+```r
+library(dplyr)
+```
+
+---
+
+## Selecting
+
+Selects or deselects one or multiple variables.
+
+
+```r
+select(dat, treated)
+```
+
+
+```
+## # A tibble: 1 × 1
+##   treated
+##     &lt;dbl&gt;
+## 1       0
+```
+
+
+```r
+select(dat, -treated)
+```
+
+
+```
+## # A tibble: 1 × 5
+##   sch_id st_id   age female std_scores
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+## 1      1     1     8      0     -0.159
+```
+
+
+```r
+select(dat, sch_id:female)
+```
+
+
+```
+## # A tibble: 1 × 5
+##   sch_id st_id treated   age female
+##    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1      1     1       0     8      0
+```
+---
+
+## Filtering
+
+Looks for rows with a provided comparison, usually with `&lt;`, `&gt;`, `&lt;=`, `&gt;=`, or `==` (note: two equals!).
+
+
+```r
+filter(dat, treated == 1)
+```
+
+```
+## # A tibble: 499 × 6
+##    sch_id st_id treated   age female std_scores
+##     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+##  1      1     2       1    10      0     -0.578
+##  2      1     4       1     7      0      0.163
+##  3      1     5       1    11      0     -0.621
+##  4      1     6       1    11      0     -0.643
+##  5      1     8       1     9      0     -0.345
+##  6      1     9       1     9      1      0.160
+##  7      1    10       1     9      0     -0.248
+##  8      1    11       1     9      0     -0.365
+##  9      1    13       1     9      1      0.220
+## 10      1    15       1    11      0     -0.771
+## # ℹ 489 more rows
+```
+
+**Homework: Figure out how to choose row-wise those with age greater than the average age.**
+
+---
+
+## Arranging
+
+Sorts a dataset by a `variable` in _ascending_ order with `arrange(dat, variable)`.
+
+
+```r
+arrange(dat, std_scores)
+```
+
+
+```
+## # A tibble: 6 × 6
+##   sch_id st_id treated   age female std_scores
+##    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+## 1      5   486       1    15      0      -1.40
+## 2      2   178       0    14      0      -1.36
+## 3      3   227       1    14      0      -1.33
+## 4      8   771       0    14      0      -1.27
+## 5      1    62       0    14      0      -1.22
+## 6     10   973       1    13      0      -1.19
+```
+
+**Homework: Figure out how to order by _descending_ order.**
+
+---
+
+## Summarizing
+
+Calculate some summary function on variables, like `mean()`, `median()`, or `sd()`:
+
+
+```r
+summarize(
+  dat, 
+  avg_score = mean(std_scores), 
+  sd_score = sd(std_scores)
+)
+```
+
+```
+## # A tibble: 1 × 2
+##   avg_score sd_score
+##       &lt;dbl&gt;    &lt;dbl&gt;
+## 1    -0.352    0.357
+```
+
+**Homework: Is there a difference between summarize() and summarise()?**
+
+---
+
+## Mutating
+
+Create, edit, or delete variables in a dataset.
+
+
+```r
+mutate(
+  dat,
+  # Changes condition to an index variable with character values
+  condition = ifelse(treated == 1, "Treatment", "Control")
+)
+```
+
+
+```
+## # A tibble: 2 × 7
+##   sch_id st_id treated   age female std_scores condition
+##    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;    
+## 1      1     1       0     8      0     -0.159 Control  
+## 2      1     2       1    10      0     -0.578 Treatment
+```
+
+**Homework: Create a variable in `dat` called age_gt_10, which takes the value of 1 when age &gt; 10, otherwise 0.**
+
+---
+
+.center[
+# ⚠️
+## Tidyverse Caution!
+]
+
+The tidyverse (mainly **dplyr**, but a couple other packages) refers to variables in datasets with "naked" symbols.&lt;sup&gt;1&lt;/sup&gt;
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;summarize(dat, avg_score = mean(&lt;span style="background-color:#ffff7f"&gt;std_scores&lt;/span&gt;))&lt;/code&gt;
+
+```
+
+## # A tibble: 1 × 1
+##   avg_score
+##       &lt;dbl&gt;
+## 1    -0.352
+
+```
+
+.footnote[
+[1]: In computer science lingo, these are technically called _quoted symbols_, but that can be confusing.
+]
+
+---
+
+.center[
+# ⚠️
+## Tidyverse Caution!
+]
+
+But _outside_ of the tidyverse functions, these variables **are not defined**.
+
+
+```r
+mean(std_scores)
+```
+
+```
+## Error in mean(std_scores): object 'std_scores' not found
+```
+
+---
+
+.center[
+# ⚠️
+## Tidyverse Caution!
+]
+
+To access dataset variables outside of tidyverse functions, you must use the **`$`** ("extract") operator in conjunction with the symbol for the parent dataset.
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;mean(&lt;span style="background-color:#ffff7f"&gt;dat$&lt;/span&gt;std_scores)&lt;/code&gt;
+
+```
+
+## [1] -0.3519772
+
+```
+
+Just keep this in mind!
+
+---
+
+# Combining Operations
+
+These "verbs" (as **dplyr** likes to call them) are **composable** meaning you can chain these commands together, allowing you to create complex data transformations or summaries all in one step.
+
+
+```r
+summarize(
+  filter(dat, treated == 1), 
+  avg_score = mean(std_scores)
+)
+```
+
+```
+## # A tibble: 1 × 1
+##   avg_score
+##       &lt;dbl&gt;
+## 1    -0.347
+```
+
+--
+
+This is ugly. Thankfully, there is a better way of chaining these steps together!
+
+---
+
+.center[
+
+.font12[Introducing...]
+
+]
+
+--
+
+.center[
+
+## The Pipe!
+
+# `%&gt;%`
+
+]
+
+--
+
+The pipe `%&gt;%` is an operator provided by **magrittr**&lt;sup&gt;1&lt;/sup&gt; that makes writing nested functions _much_ easier.
+
+The shortcut is `command + shift + M` on Mac, or `ctrl + shift + M` on Windows.
+
+.footnote[
+[1]: Starting from R 4.1.0, there is the native pipe |&gt; in R, which does the same thing without loading `tidyverse`.
+]
+
+---
+
+## The Pipe
+
+Instead of writing
+
+```r
+h(g(f(x)))
+```
+
+you can write
+
+```r
+x %&gt;% 
+  f() %&gt;% 
+  g() %&gt;% 
+  h()
+```
+
+--
+
+The pipe works by inserting the result of the left hand side into the **first argument** of the right hand side.
+
+---
+
+# Combining Operations
+
+Revisiting our first chained example,
+
+
+```r
+summarize(
+  filter(dat, treated == 1), 
+  avg_scores = mean(std_scores)
+)
+```
+
+we can now use
+
+
+```r
+dat %&gt;% 
+  filter(treated == 1) %&gt;% 
+  summarize(avg_scores = mean(std_scores))
+```
+
+```
+## # A tibble: 1 × 1
+##   avg_scores
+##        &lt;dbl&gt;
+## 1     -0.347
+```
+
+---
+
+## Grouping
+
+Now let's add grouping into the mix, which you can easily do with `group_by(variable)`:
+
+
+```r
+dat %&gt;% 
+  group_by(treated) %&gt;% 
+  summarize(avg_scores = mean(std_scores))
+```
+
+```
+## # A tibble: 2 × 2
+##   treated avg_scores
+##     &lt;dbl&gt;      &lt;dbl&gt;
+## 1       0     -0.357
+## 2       1     -0.347
+```
+
+---
+
+## Grouping
+
+You can group by multiple variables as well. Just add more variables to `group_by()`:
+
+
+```r
+dat %&gt;% 
+* group_by(treated, female) %&gt;% 
+  summarize(avg_scores = mean(std_scores))
+```
+
+
+```
+## `summarise()` has grouped output by 'treated'. You can override using the
+## `.groups` argument.
+```
+
+```
+## # A tibble: 4 × 3
+## # Groups:   treated [2]
+##   treated female avg_scores
+##     &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+## 1       0      0    -0.504 
+## 2       0      1     0.0169
+## 3       1      0    -0.473 
+## 4       1      1    -0.0218
+```
+
+---
+
+# Recap
+
+.pull-left[
+
+.font12[
+
+How would I find the median scores by treatment and gender?
+]
+
+]
+
+.pull-right[
+
+.font10[
+
+
+```r
+# 1.
+dat %&gt;% 
+  filter(treated, female) %&gt;% 
+  summarize(
+    med_scores = median(std_scores)
+  )
+
+# 2.
+dat %&gt;%
+  summarize(
+    med_scores = median(std_scores)
+  ) %&gt;% 
+  group_by(treated, female) 
+
+# 3.
+dat %&gt;%
+  group_by(treated, female) %&gt;% 
+  summarize(
+    med_scores = median(std_scores)
+  )
+
+# 4.
+dat %&gt;%
+  summarize(
+    med_scores = median(std_scores)
+  ) %&gt;% 
+  filter(treated, female)
+```
+
+]
+
+]
+
+---
+
+# Recap
+
+.pull-left[
+
+.font12[
+
+How would I find the median scores by treatment and gender?
+
+]
+
+]
+
+.pull-right[
+
+.font10[
+
+
+```r
+# 1.
+dat %&gt;% 
+  filter(treated, female) %&gt;% 
+  summarize(
+    med_scores = median(std_scores)
+  )
+
+# 2.
+dat %&gt;%
+  summarize(
+    med_scores = median(std_scores)
+  ) %&gt;% 
+  group_by(treated, female) 
+
+# 3.
+*dat %&gt;%
+* group_by(treated, female) %&gt;% 
+* summarize(
+*   med_scores = median(std_scores)
+* )
+
+# 4.
+dat %&gt;%
+  summarize(
+    med_scores = median(std_scores)
+  ) %&gt;% 
+  filter(treated, female)
+```
+
+]
+
+]
+
+---
+
+## Bonus Point
+
+**You can do Tableau-style plots in R using just one command:**
+
+
+```r
+install.packages("esquisse")
+library(esquisse)
+
+# Open Tableau-like dashboard in Rstudio
+esquisser()
+```
+
+**Note: We can talk about summary statistics and visualization in a future workshop.**
+
+---
+
+# Exercise
+
+Use the functions you learned to answer the following question:
+
+1. What is the average age for boys and girls?
+2. Which `st_id` is the oldest students in school 8?
+3. Which age group has the most number of students?
+4. What is the average `std_scores` for girls aged 7 or 8 in the treatment group?
+5. Create a data.frame with the name `dat_s` with the following rules:
+- Deselect `st_id`
+- Filter out students younger than 10 years old
+- Create a new variable called `transformed_scores` and assign it the value of 99 times the `std_scores` if age &gt;= 10, else assign it the value 101 times the `std_scores`
+
+.footnote[
+
+Consider using the `|` (read: **or**) operator to combine multiple filter statements into one (e.g. filtering for `this` or `that` would be `filter(dat, this | that)`).
+
+]
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"countIncrementalSlides": false,
+"highlightLines": true,
+"highlightStyle": "solarized-light"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

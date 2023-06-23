@@ -1,0 +1,871 @@
+---
+title: "Session 1"
+subtitle: "Data Wrangling in R"
+author: "Youth Impact R Workshop Series"
+institute: "Zezhen Wu"
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      countIncrementalSlides: false
+      highlightLines: true
+      highlightStyle: solarized-light
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(xaringanthemer)
+library(magrittr)
+library(flair)
+library(tidyverse)
+# xaringan::inf_mr()
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+# style_mono_accent(
+#   text_font_google = google_font("Montserrat", "300", "300i"),
+#   code_font_google = google_font("Fira Mono")
+# )
+style_mono_accent(
+  base_color = "#1c5253",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "300", "300i"),
+  code_font_google   = google_font("Fira Mono")
+)
+```
+
+<style>
+:root {
+  --font12: 12pt;
+  --font10: 10pt;
+}
+
+.font12 > table {
+  font-size: var(--font12);
+}
+
+.font12 > p {
+  font-size: var(--font12);
+}
+
+.font12 > pre .remark-code-line {
+  font-size: var(--font12);
+}
+
+.font10 > table {
+  font-size: var(--font10);
+}
+
+.font10 > p {
+  font-size: var(--font10);
+}
+
+.font10 > pre .remark-code-line {
+  font-size: var(--font10);
+}
+</style>
+
+# Disclaimer
+
+Part of this presentation is borrowed from the public [GitHub repository](https://github.com/nyuglobalties/workshops) for the NYU Global TIES R workshop coauthored by Patrick Anker and Zezhen Wu.
+
+---
+
+# Agenda
+
+By the end of this workshop, you should be able to understand the following code:
+
+```{r, eval = FALSE}
+library(tidyverse)
+
+dat <- read_csv(here::here("data/RCT.csv"))
+
+dat %>%
+  filter(age <= 10) %>%
+  group_by(sch_id) %>% 
+  summarize(avg_scores = mean(std_scores)) %>% 
+  mutate(transformed_scores = as.numeric(scale(avg_scores))) %>% 
+  select(-avg_scores)
+```
+
+We'll be covering
+
+- Basic R syntax
+- Data loading
+- Data inspection
+- Data manipulation
+
+---
+
+# Type of R files
+
+### R Projects (.Rproj)
+
+- Organize work in a structured manner with relative path.
+- Provide a dedicated workspace for each project.
+
+### R Script (.R)
+
+- Plain text files containing R code.
+- Executed directly or sourced within other scripts or documents.
+
+### R Markdown (.Rmd)
+
+- Combine R code, text, and output.
+- Create dynamic documents.
+
+--
+
+**We will talk about data workflow management in a future workshop.**
+
+**Let's try to create these files by hand!**
+
+---
+class: middle, center
+
+# Loading your data
+
+## 🗄➡ 💻
+
+---
+
+## Understanding R syntax
+
+R is built around **functions**, bits of atomic code that accept inputs and return an output.
+
+--
+
+A function looks like this:
+
+```{r, eval=FALSE}
+function_name(argument_1, argument_2, parameter = TRUE)
+```
+
+--
+
+Functions can be bundled together and shared using **packages**. To access a function from a specific package, we use the `::` operator.
+
+```{r, eval=FALSE}
+package.name::function_name(argument_1, argument_2, parameter = TRUE)
+```
+
+---
+
+## Understanding R syntax
+
+--
+
+It may be cumbersome to write `::` each time you use a function. Therefore, R allows you to load those packages in your current session using the `library()` function so you can just refer to the function name without `::`.
+
+--
+
+```{r, eval=FALSE}
+library(package.name)
+
+# Refers to `function_name` in `package.name`
+function_name(argument_1, argument_2, parameter = TRUE)
+```
+
+--
+
+In Stata, this would be similar to:
+
+```
+// function_name argument_1 argument_2, parameter 1
+```
+
+---
+
+# Tools for loading data
+
+While there are lots of options, I recommend loading data using the following functions:
+
+```{r, eval=FALSE}
+readr::read_csv()
+haven::read_dta()
+openxlsx::read.xlsx()
+```
+
+**readr** and **haven** are both part of the "_tidyverse_", a bundle of packages that contain the most essential functions for data wrangling.
+
+**openxlsx** is a standalone package that deals with reading and writing Excel files.
+
+---
+
+
+# Tools for loading data
+
+--
+
+Some packages come with the installation of R, some don't. This is because R is an open-source software, and anyone in the world can contribute their packages to the R community.
+
+--
+
+To use these packages, you need to install them first by running `install.packages("package.name")`:
+
+```r
+install.packages("tidyverse")
+install.packages("haven")
+```
+
+**Note:** Only run these commands **once**. Once they're installed, you don't need to run that command again since the package will be on your computer.
+
+---
+
+# Finding help on packages
+
+R packages are typically published on [CRAN](https://cran.r-project.org/web/packages/available_packages_by_name.html) (The Comprehensive R Archive Network).
+
+Developer versions of R packages are typically published on GitHub (for instance, [`readr`](https://github.com/tidyverse/readr)).
+
+When you encounter a function that you don't know or understand for some reason, **consult the R help system**!
+
+--
+
+```{r, eval=FALSE}
+# search help doc for a package
+?readr
+
+# search help doc for a function in a package
+?readr::read_csv
+
+# If you're not certain what a function name is or you're looking for a certain topic, use `??` (think: "wildcard search") followed by the topic name
+??readr::read_table
+```
+
+---
+
+
+# Let's load our data!
+
+The simulated RCT dataset is located in the `data` directory (folder) at the root of this project. I'll use the **here** package to create paths that are _relative to the project root_.
+
+--
+
+I'll attach the packages we need for now:
+
+```{r}
+library(readr)
+library(here)
+```
+
+Note how **here** tells us where it thinks the project root is! It recursively searches upward for a directory with a `DESCRIPTION` or `.Rproj` file. 
+
+**here** is very handy utility for reproducibility since it _localizes_ paths to the project -- and not expanding to the full path on _your_ computer.
+
+---
+
+# Let's load our data!
+
+Time to load the data:
+
+```{r}
+dat <- read_csv(here("data/RCT.csv"))
+```
+
+---
+
+## Two things to note
+
+.pull-left[
+
+R uses the `<-` operator to _assign_ values to symbols (variables). 
+
+```{r, eval=FALSE}
+x <- (1+1) * 2^3 / 4 - 2
+```
+
+In our data's case, the results of reading the CSV file are assigned to the `dat` symbol.
+
+]
+
+.pull-right[
+
+Unlike Stata, you can have multiple data frames in one R session.
+
+```{r, eval=FALSE}
+dat1 <- dat
+dat2 <- dat
+```
+
+This is very helpful in cross-checking and merging datasets, as well as interacting with various R objects (e.g., vectors, matrices, lists, data frames, etc.).
+
+]
+
+---
+
+# Looking at our data
+
+After loading our data, it's useful to high-level view of its content to make sure that it loaded correctly.
+
+We'll use the `str()` and `print()` functions here, both part of base R.
+
+---
+
+# Looking at our data
+
+```{r, include=FALSE}
+attr(dat, "spec") <- NULL
+```
+
+```{r}
+str(dat)
+class(dat)
+```
+
+---
+
+# Looking at our data
+
+The _class_ of this `dat` object is a `data.frame`. `data.frame`s are R's representation of tabular data. `dat` is also a `tbl_df` ("tibble"), which is the Tidyverse's version of a `data.frame` that is a little bit more stringent (i.e. safe) than base R's version, and it has a prettier `print()` method:
+
+```{r}
+print(dat)
+```
+
+---
+
+# Looking at our data
+
+If you'd like to see _all_ of your data in a pretty Excel-like spreadsheet, use the `View()` function which has a great display in RStudio.
+
+```{r, eval=FALSE}
+View(dat)
+```
+
+Note: Or you can click on the data frame in the Environment tab. Or hold command/ctrl and click `dat` on the R script.
+
+---
+
+# Data types in R
+
+You may have noticed a bunch of three-letter abbreviations next to the variable names in `print(dat)` and the variable content in `str(dat)`. These are the _type signatures_ for each variable:
+
+- Double (`dbl` / `num`): All real numbers, like $50$, $23.193$, or $1.24\times10^{-8}$
+- Character (`chr`): Text/strings, written with single- or double-quotes (e.g. `"a string"`)
+
+There are a couple more that you will encounter regularly:
+
+- Integer (`int`): Integers and counting numbers. No decimals and scientific notation here!
+- Logical (`lgl`): Boolean data, written as `TRUE` or `FALSE`.
+- Factor (`fct`): Factors, R's representation of categorical data. They look like character data with `print()`, but under the hood they are integers. These should only exist in cleaned, ready-for-analysis data!
+
+---
+
+# Quiz
+
+.pull-left[
+
+How do I create a variable `x` that refers to the sentence "Hello, world!" ?
+
+]
+
+.pull-right[
+
+Use 1, 2, 3, or 4 to refer to the code line number.
+
+```{r, eval=FALSE}
+x "Hello, world!"
+"x" <- Hello, world!
+x <- "Hello, world!"
+x <- Hello, world!
+```
+
+]
+
+---
+
+# Quiz
+
+.pull-left[
+
+How do I create a variable `x` that refers to the sentence "Hello, world!" ?
+
+]
+
+.pull-right[
+
+Use 1, 2, 3, or 4 to refer to the code line number.
+
+```{r, eval=FALSE}
+x "Hello, world!"
+"x" <- Hello, world!
+*x <- "Hello, world!"
+x <- Hello, world!
+```
+
+]
+
+---
+class: middle, center
+
+# Working with your data
+
+## 🗄🔍
+
+---
+
+# Working with your data
+
+What we'll be discussing today is basic *data wrangling*.
+
+> Data wrangling (n.): The process of transforming data from one raw form into another format with the intent of making it more appropriate and valuable for a variety of downstream purposes such as analytics.
+> 
+> <em>&mdash;Wikipedia</em>
+
+---
+
+# Basic Data Wrangling
+
+Most data wrangling comes down to **five** basic operations:
+
+- **Selecting**: Selecting or deselcting variables 
+- **Filtering**: Filtering by row
+- **Arranging**: Reordering by variables
+- **Summarizing**: Aggregating data for summary statistics
+- **Mutating**: Creating, editing, or deleting variables
+
+You can also **Group** these operations by variables. For example, finding the average math score in each class would be achieved by _grouping_ by class and then _summarizing_ by taking the mean.
+
+---
+
+# Basic Data Wrangling
+
+In this workshop, **we recommend using the dplyr package in tidyverse**, but we can also achieve the same thing in base R:
+
+.font12[
+
+| Operation   |                                       Tidyverse |                                    Base R       |
+|:------------|------------------------------------------------:|------------------------------------------------:|
+| Selecting   | `select(dat, treated)`                          | `dat[,"treated"]`                               |
+| Filtering   | `filter(dat, treated == 1)`                     | `dat[dat$treated == 1", ]`                      |
+| Arranging   | `arrange(dat, std_scores)`                      | `dat[order(dat$std_scores), ]`                  |
+| Summarizing | `summarize(dat, avg_scores = mean(std_scores))` | `data.frame(avg_scores = mean(dat$std_scores))` |
+| Mutating    | `mutate(dat, failed = std_scores < 0)`          | `dat$failed <- dat$std_scores < 0`              |
+
+]
+
+It's  apparent that tidyverse has a much more consistent and readable syntax than base R.
+
+---
+
+# Basic Data Wrangling
+
+All of these tidyverse functions are provided by the **dplyr** package.
+
+```{r}
+library(dplyr)
+```
+
+---
+
+## Selecting
+
+Selects or deselects one or multiple variables.
+
+```{r, eval = F}
+select(dat, treated)
+```
+
+```{r, echo = F}
+head(select(dat, treated), 1)
+```
+
+```{r, eval = F}
+select(dat, -treated)
+```
+
+```{r, echo = F}
+head(select(dat, -treated), 1)
+```
+
+```{r, eval = F}
+select(dat, sch_id:female)
+```
+
+```{r, echo = F}
+head(select(dat, sch_id:female), 1)
+```
+---
+
+## Filtering
+
+Looks for rows with a provided comparison, usually with `<`, `>`, `<=`, `>=`, or `==` (note: two equals!).
+
+```{r}
+filter(dat, treated == 1)
+```
+
+**Homework: Figure out how to choose row-wise those with age greater than the average age.**
+
+---
+
+## Arranging
+
+Sorts a dataset by a `variable` in _ascending_ order with `arrange(dat, variable)`.
+
+```{r, eval=FALSE}
+arrange(dat, std_scores)
+```
+
+```{r, echo=FALSE}
+head(arrange(dat, std_scores), 6)
+```
+
+**Homework: Figure out how to order by _descending_ order.**
+
+---
+
+## Summarizing
+
+Calculate some summary function on variables, like `mean()`, `median()`, or `sd()`:
+
+```{r}
+summarize(
+  dat, 
+  avg_score = mean(std_scores), 
+  sd_score = sd(std_scores)
+)
+```
+
+**Homework: Is there a difference between summarize() and summarise()?**
+
+---
+
+## Mutating
+
+Create, edit, or delete variables in a dataset.
+
+```{r, eval=FALSE}
+mutate(
+  dat,
+  # Changes condition to an index variable with character values
+  condition = ifelse(treated == 1, "Treatment", "Control")
+)
+```
+
+```{r, echo=FALSE}
+head(mutate(
+  dat,
+  # Changes condition to an index variable with character values
+  condition = ifelse(treated == 1, "Treatment", "Control")
+), 2)
+```
+
+**Homework: Create a variable in `dat` called age_gt_10, which takes the value of 1 when age > 10, otherwise 0.**
+
+---
+
+.center[
+# ⚠️
+## Tidyverse Caution!
+]
+
+The tidyverse (mainly **dplyr**, but a couple other packages) refers to variables in datasets with "naked" symbols.<sup>1</sup>
+
+```{r flaired_symbols, include=FALSE}
+summarize(dat, avg_score = mean(std_scores))
+```
+
+```{r, echo=FALSE}
+decorate("flaired_symbols") %>% 
+  flair("std_scores")
+```
+
+.footnote[
+[1]: In computer science lingo, these are technically called _quoted symbols_, but that can be confusing.
+]
+
+---
+
+.center[
+# ⚠️
+## Tidyverse Caution!
+]
+
+But _outside_ of the tidyverse functions, these variables **are not defined**.
+
+```{r, error=TRUE}
+mean(std_scores)
+```
+
+---
+
+.center[
+# ⚠️
+## Tidyverse Caution!
+]
+
+To access dataset variables outside of tidyverse functions, you must use the **`$`** ("extract") operator in conjunction with the symbol for the parent dataset.
+
+```{r extract_op, include=FALSE}
+mean(dat$std_scores)
+```
+
+```{r, echo=FALSE}
+decorate("extract_op") %>% 
+  flair_rx("\\w+\\$")
+```
+
+Just keep this in mind!
+
+---
+
+# Combining Operations
+
+These "verbs" (as **dplyr** likes to call them) are **composable** meaning you can chain these commands together, allowing you to create complex data transformations or summaries all in one step.
+
+```{r}
+summarize(
+  filter(dat, treated == 1), 
+  avg_score = mean(std_scores)
+)
+```
+
+--
+
+This is ugly. Thankfully, there is a better way of chaining these steps together!
+
+---
+
+.center[
+
+.font12[Introducing...]
+
+]
+
+--
+
+.center[
+
+## The Pipe!
+
+# `%>%`
+
+]
+
+--
+
+The pipe `%>%` is an operator provided by **magrittr**<sup>1</sup> that makes writing nested functions _much_ easier.
+
+The shortcut is `command + shift + M` on Mac, or `ctrl + shift + M` on Windows.
+
+.footnote[
+[1]: Starting from R 4.1.0, there is the native pipe |> in R, which does the same thing without loading `tidyverse`.
+]
+
+---
+
+## The Pipe
+
+Instead of writing
+
+```r
+h(g(f(x)))
+```
+
+you can write
+
+```r
+x %>% 
+  f() %>% 
+  g() %>% 
+  h()
+```
+
+--
+
+The pipe works by inserting the result of the left hand side into the **first argument** of the right hand side.
+
+---
+
+# Combining Operations
+
+Revisiting our first chained example,
+
+```{r, eval=FALSE}
+summarize(
+  filter(dat, treated == 1), 
+  avg_scores = mean(std_scores)
+)
+```
+
+we can now use
+
+```{r}
+dat %>% 
+  filter(treated == 1) %>% 
+  summarize(avg_scores = mean(std_scores))
+```
+
+---
+
+## Grouping
+
+Now let's add grouping into the mix, which you can easily do with `group_by(variable)`:
+
+```{r}
+dat %>% 
+  group_by(treated) %>% 
+  summarize(avg_scores = mean(std_scores))
+```
+
+---
+
+## Grouping
+
+You can group by multiple variables as well. Just add more variables to `group_by()`:
+
+```{r, eval=FALSE}
+dat %>% 
+* group_by(treated, female) %>% 
+  summarize(avg_scores = mean(std_scores))
+```
+
+```{r, echo=FALSE}
+dat %>% 
+  group_by(treated, female) %>% 
+  summarize(avg_scores = mean(std_scores))
+```
+
+---
+
+# Recap
+
+.pull-left[
+
+.font12[
+
+How would I find the median scores by treatment and gender?
+]
+
+]
+
+.pull-right[
+
+.font10[
+
+```{r, eval=FALSE}
+# 1.
+dat %>% 
+  filter(treated, female) %>% 
+  summarize(
+    med_scores = median(std_scores)
+  )
+
+# 2.
+dat %>%
+  summarize(
+    med_scores = median(std_scores)
+  ) %>% 
+  group_by(treated, female) 
+
+# 3.
+dat %>%
+  group_by(treated, female) %>% 
+  summarize(
+    med_scores = median(std_scores)
+  )
+
+# 4.
+dat %>%
+  summarize(
+    med_scores = median(std_scores)
+  ) %>% 
+  filter(treated, female)
+```
+
+]
+
+]
+
+---
+
+# Recap
+
+.pull-left[
+
+.font12[
+
+How would I find the median scores by treatment and gender?
+
+]
+
+]
+
+.pull-right[
+
+.font10[
+
+```{r, eval=FALSE}
+# 1.
+dat %>% 
+  filter(treated, female) %>% 
+  summarize(
+    med_scores = median(std_scores)
+  )
+
+# 2.
+dat %>%
+  summarize(
+    med_scores = median(std_scores)
+  ) %>% 
+  group_by(treated, female) 
+
+# 3.
+*dat %>%
+* group_by(treated, female) %>% 
+* summarize(
+*   med_scores = median(std_scores)
+* )
+
+# 4.
+dat %>%
+  summarize(
+    med_scores = median(std_scores)
+  ) %>% 
+  filter(treated, female)
+```
+
+]
+
+]
+
+---
+
+## Bonus Point
+
+**You can do Tableau-style plots in R using just one command:**
+
+```{r, eval = F}
+install.packages("esquisse")
+library(esquisse)
+
+# Open Tableau-like dashboard in Rstudio
+esquisser()
+```
+
+**Note: We can talk about summary statistics and visualization in a future workshop.**
+
+---
+
+# Exercise
+
+Use the functions you learned to answer the following question:
+
+1. What is the average age for boys and girls?
+2. Which `st_id` is the oldest students in school 8?
+3. Which age group has the most number of students?
+4. What is the average `std_scores` for girls aged 7 or 8 in the treatment group?
+5. Create a data.frame with the name `dat_s` with the following rules:
+- Deselect `st_id`
+- Filter out students younger than 10 years old
+- Create a new variable called `transformed_scores` and assign it the value of 99 times the `std_scores` if age >= 10, else assign it the value 101 times the `std_scores`
+
+.footnote[
+
+Consider using the `|` (read: **or**) operator to combine multiple filter statements into one (e.g. filtering for `this` or `that` would be `filter(dat, this | that)`).
+
+]
+
+
