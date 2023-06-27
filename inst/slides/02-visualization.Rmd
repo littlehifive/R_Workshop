@@ -1,0 +1,865 @@
+---
+title: "Session 2"
+subtitle: "Visualization in R"
+author: "Youth Impact R Workshop Series"
+institute: "Zezhen Wu"
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      countIncrementalSlides: false
+      highlightLines: true
+      highlightStyle: solarized-light
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, cache = T)
+options(htmltools.dir.version = FALSE)
+library(xaringanthemer)
+library(magrittr)
+library(flair)
+library(tidyverse)
+# xaringan::inf_mr()
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+# style_mono_accent(
+#   text_font_google = google_font("Montserrat", "300", "300i"),
+#   code_font_google = google_font("Fira Mono")
+# )
+style_mono_accent(
+  base_color = "#1c5253",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "300", "300i"),
+  code_font_google   = google_font("Fira Mono")
+)
+```
+
+<style>
+:root {
+  --font12: 12pt;
+  --font10: 10pt;
+  --font8: 8pt;
+}
+
+.font12 > table {
+  font-size: var(--font12);
+}
+
+.font12 > p {
+  font-size: var(--font12);
+}
+
+.font12 > pre .remark-code-line {
+  font-size: var(--font12);
+}
+
+.font10 > table {
+  font-size: var(--font10);
+}
+
+.font10 > p {
+  font-size: var(--font10);
+}
+
+.font10 > pre .remark-code-line {
+  font-size: var(--font10);
+}
+
+.font8 > table {
+  font-size: var(--font8);
+}
+
+.font8 > p {
+  font-size: var(--font8);
+}
+
+.font8 > pre .remark-code-line {
+  font-size: var(--font8);
+}
+</style>
+
+# Agenda
+
+- Understanding `ggplot2` syntax
+
+- Getting interactive plots in `plotly` from `ggplot2`
+
+- A primer on interactive visualization in R `shiny`
+
+---
+
+# Learning tools
+
+- A Tableau-like dashboard of plotting in R: [`esquisse::esquisser()`](https://cran.r-project.org/web/packages/esquisse/vignettes/get-started.html)
+
+- [ggplot2: Elegant Graphics for Data Analysis (3e)](https://ggplot2-book.org/)
+
+- [The R Graph Gallery](https://r-graph-gallery.com/ggplot2-package.html)
+
+- [Plotly R Open Source Graphing Library](https://plotly.com/r/)
+
+- [Mastering Shiny](https://mastering-shiny.org/)
+
+- [Statistical Inference via Data Science: A ModernDive into R and the Tidyverse](https://moderndive.com/)
+
+- ChatGPT is particularly good at generating `ggplot2` and `shiny` codes, if you provide it with adequate descriptions.
+
+---
+
+# What is a ggplot?
+
+.font12[
+
+- `ggplot2` is a powerful and flexible data visualization package for R. It is a part of `tidyverse`.
+
+- It is based on the Grammar of Graphics, a theoretical framework that describes and breaks down graphs into discrete components.
+
+- With `ggplot2`, you can create complex multi-layered graphics from data in a structured and clear manner.
+
+
+- `ggplot2` is installed as part of `tidyverse`, so you don't need to reinstall it. `library(tidyverse)` also loads `ggplot2` along with other important data wrangling packages.
+
+```{r load ggplot2}
+# install.packages("ggplot2")
+# library(tidyverse)
+library(ggplot2)
+```
+]
+
+---
+# Load an example dataset
+
+```{r load mpg}
+# load an R default dataset into your session
+mpg <- mpg
+
+# check out the structure of the dataset
+str(mpg)
+```
+
+---
+class: middle, center
+
+# `ggplot2` syntax
+
+## 🗄 ➡ 📊
+
+---
+
+# Create a ggplot
+
+```{r create a ggplot, fig.height = 3, fig.align='center', messages = F, dpi = 300}
+# create a plot between engine size (displ) and fuel efficiency (hwy)
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+---
+
+# Exercise 1
+
+```{r exercise 1, eval=FALSE}
+# Run ggplot(data = mpg). What do you see?
+ggplot(data = mpg)
+
+# How many rows are in mpg? How many columns?
+
+# What does the drv variable describe? Read the help for ?mpg to find out.
+?mpg
+
+# Make a scatterplot of hwy vs cyl.
+
+# What happens if you make a scatterplot of class vs drv? Why is the plot not useful?
+```
+
+---
+
+# Exercise 1 (with answers)
+
+```{r exercise 1 with answers, eval=FALSE}
+# Run ggplot(data = mpg). What do you see?
+ggplot(data = mpg)
+
+# How many rows are in mpg? How many columns?
+dim(mpg)
+nrow(mpg)
+ncol(mpg)
+
+# What does the drv variable describe? Read the help for ?mpg to find out.
+?mpg
+
+# Make a scatterplot of hwy vs cyl.
+ggplot(data = mpg, aes(x = hwy,y = cyl)) + geom_point()
+
+# What happens if you make a scatterplot of class vs drv? Why is the plot not useful?
+ggplot(data = mpg, aes(x = class, y = drv)) + geom_point()
+```
+
+---
+
+# Aesthetic Mapping
+
+- Change the color of an element by group: `color`
+
+- Change the size of an element by group: `size`
+
+- Change the opacity of an element by group: `alpha`
+
+- Change the shape of an element by group: `shape`
+
+---
+
+# Aesthetic Mapping (`color`)
+
+```{r aesthetic mapping color, fig.height = 3, fig.align='center', dpi = 300}
+# color mapping
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, colour = class))
+```
+
+---
+
+# Aesthetic Mapping (`size`)
+
+```{r aesthetic mapping size, fig.height = 3, fig.align='center', dpi = 300}
+# size mapping
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+```
+
+---
+
+# Aesthetic Mapping (`alpha`)
+
+```{r aesthetic mapping alpha, fig.height = 3, fig.align='center', dpi = 300}
+# transparency mapping
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+```
+
+---
+
+# Aesthetic Mapping (`shape`)
+
+```{r aesthetic mapping shape, fig.height = 3, fig.align='center', dpi = 300}
+# shape mapping
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+```
+
+---
+
+# What is wrong with this Aesthetic Mapping?
+
+```{r aesthetic mapping note 1, fig.height = 3, fig.align='center', dpi = 300}
+# set aesthetics manually
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+```
+
+---
+
+# What are the points red instead of blue?
+
+```{r aesthetic mapping note 2, fig.height = 3, fig.align='center', dpi = 300}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+```
+
+---
+
+# Exercise 2
+
+.font10[
+```{r exerciese 2, eval = F}
+
+# What’s gone wrong with this code? Why are the points not green?
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = "green"))
+
+# Which variables in mpg are categorical? 
+# Which variables are continuous? (Hint: type ?mpg to read the documentation for the dataset). 
+# How can you see this information when you run mpg?
+sapply(mpg, class)
+
+# Map a continuous variable to color, size, and shape. 
+# How do these aesthetics behave differently for categorical vs. continuous variables?
+
+# What happens if you map the same variable to multiple aesthetics?
+
+# What does the stroke aesthetic do? What shapes does it work with? (Hint: use ?geom_point)
+
+# What happens if you map an aesthetic to something other than a variable name, 
+# like aes(colour = displ < 5)?
+```
+]
+
+---
+
+# Facets
+
+- Plot for each level of a variable: `facet_wrap()`
+
+- Plot for each level of a combination of two variables: `facet_wrap()`
+
+- Combine two or more plots by row/column: `gridExtra::grid.arrange()`
+
+
+---
+
+# Facets (one group)
+
+```{r facet_wrap, fig.height = 3, fig.align='center', dpi = 300}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+
+---
+
+# Facets (two groups)
+
+```{r facet_grid, fig.height = 3, fig.align='center', dpi = 300}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_grid(drv ~ cyl)
+```
+
+---
+
+# Combining multiple plots
+
+```{r grid arrange, fig.height = 3, fig.align='center', dpi = 300}
+p1 <- ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+
+p2 <- ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+
+library(gridExtra)
+grid.arrange(p1, p2, nrow = 1)
+```
+
+---
+
+# Exercise 3
+
+.font8[
+```{r exercise 3, eval = F}
+# What happens if you facet on a continuous variable?
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ cty, nrow = 2)
+
+# What do the empty cells in plot with facet_grid(drv ~ cyl) mean? How do they relate to this plot?
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = drv, y = cyl))
+
+# What plots does the following code make? What does . do?
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ .)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(. ~ cyl)
+
+# Take the first faceted plot in this section:
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+
+
+# What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? 
+# How might the balance change if you had a larger dataset?
+
+# Read ?facet_wrap. What does nrow do? What does ncol do? 
+# What other options control the layout of the individual panels?
+# Why doesn’t facet_grid() have nrow and ncol arguments?
+
+# When using facet_grid() you should usually put the variable with more unique levels in the columns. Why?
+
+```
+]
+
+---
+
+# Geometric Objects
+
+- scatterplots: `geom_point()`
+
+- linegraphs: `geom_line()`
+
+- histograms: `geom_histogram()`
+
+- boxplots: `geom_boxplot()`
+
+- barplots: `geom_bar()` & `geom_col()`
+
+---
+
+# scatterplots: `geom_point()`
+
+```{r, fig.height = 3, fig.align='center', dpi = 300}
+# apply global (instead of local) mapping to a scatterplot with a best fit line
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+---
+
+# linegraphs: `geom_line()`
+
+```{r, fig.height = 3, fig.align='center', dpi = 300}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() +
+  geom_line()
+```
+
+---
+
+# histograms: `geom_histogram()`
+```{r, fig.height = 3, fig.align='center', dpi = 300}
+ggplot(data = mpg, mapping = aes(x = hwy)) +
+  geom_histogram()
+```
+
+---
+
+# boxplots: `geom_boxplot()`
+```{r, fig.height = 4, fig.align='center', dpi = 300}
+ggplot(data = mpg, mapping = aes(x = factor(year), y = hwy)) +
+  geom_boxplot()
+```
+
+---
+
+# barplots: `geom_bar()` & `geom_col()`
+
+.pull-left[
+```{r, fig.height = 3, fig.align='center', dpi = 300}
+# bar plot based on one variable
+ggplot(data = mpg, 
+       mapping = aes(x = hwy)) +
+  geom_bar()
+```
+]
+
+.pull-right[
+```{r, fig.height = 3, fig.align='center', dpi = 300}
+# bar plot based on two variables
+df <- mpg %>%
+  group_by(year) %>%
+  summarize(hwy = mean(hwy, 
+                       na.rm = T))
+
+ggplot(data = df, 
+       mapping = aes(x = year, 
+                     y = hwy)) +
+  geom_col()
+```
+]
+---
+
+# barplots by group
+```{r, fig.height = 3, fig.align='center', dpi = 300}
+# a new default dataset
+diamonds <- diamonds
+
+# stacked bars
+ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) +
+  geom_bar(position = "identity")
+```
+
+---
+
+# barplots by group
+```{r, fig.height = 3, fig.align='center', dpi = 300}
+# bars side by side
+ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) +
+  geom_bar(position = "dodge")
+```
+
+---
+
+# barplots by group
+```{r, fig.height = 3, fig.align='center', dpi = 300}
+# bars as proportions 
+ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) +
+  geom_bar(position = "fill") +
+  labs(y = "Proportion")
+```
+
+---
+
+# Exercise 4
+```{r exercise 4, eval = F}
+# What geom would you use to draw a line chart? A boxplot? A histogram? An area chart?
+
+# Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", 
+              se = F)
+# What does show.legend = FALSE do? What happens if you remove it?
+# Why do you think I used it earlier in the chapter?
+
+# What does the se argument to geom_smooth() do?
+
+# Will these two graphs look different? Why/why not?
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+---
+
+# Coordinate System
+
+.pull-left[
+.font10[
+```{r, fig.height = 6, fig.align='center', dpi = 300}
+ggplot(data = mpg, 
+       mapping = aes(x = class, 
+                     y = hwy)) + 
+  geom_boxplot()
+```
+]
+]
+
+.pull-right[
+.font10[
+```{r, fig.height = 6, fig.align='center', dpi = 300}
+ggplot(data = mpg, 
+       mapping = aes(x = class, 
+                     y = hwy)) + 
+  geom_boxplot() +
+  coord_flip()
+```
+]
+]
+
+---
+
+# Coordinate System
+
+- `coord_flip()`
+
+- `coord_polar()`
+
+- `labs(x = ..., y = ...)`
+
+- `theme()`
+
+---
+
+# Coordinate System
+.pull-left[
+.font10[
+```{r, fig.height = 5, fig.align='center', dpi = 300}
+ggplot(data = diamonds) + 
+  geom_bar(
+    mapping = aes(x = cut, fill = cut), 
+    show.legend = FALSE,
+    width = 1
+  ) + 
+  theme(aspect.ratio = 1) +
+  theme_bw() + 
+  labs(x = NULL, y = NULL) + 
+  coord_flip()
+```
+]
+]
+
+.pull-right[
+.font10[
+```{r, fig.height = 5, fig.align='center', dpi = 300}
+ggplot(data = diamonds) + 
+  geom_bar(
+    mapping = aes(x = cut, fill = cut), 
+    show.legend = FALSE,
+    width = 1
+  ) + 
+  theme(aspect.ratio = 1) +
+  theme_minimal() + 
+  labs(x = NULL, y = NULL) + 
+  coord_polar() +
+  scale_fill_brewer(palette = "Set1")
+```
+]
+]
+
+---
+
+# Labels and Annotations
+
+.font8[
+```{r labels and annotations, fig.height = 3, fig.align='center', dpi = 300, message = F}
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth(se = FALSE) +
+  labs(
+    title = "Fuel efficiency generally decreases with engine size",
+    subtitle = "Two seaters (sports cars) are an exception because of their light weight",
+    caption = "Data from fueleconomy.gov",
+    x = "Engine displacement (L)",
+    y = "Highway fuel economy (mpg)",
+    colour = "Car type")
+```
+]
+
+---
+
+# Scales
+
+```{r scales, fig.height = 3, fig.align='center', dpi = 300, message = F}
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(color = class)) +
+  scale_x_continuous(breaks = seq(1, 10, by = 1)) +
+  scale_y_continuous(breaks = seq(15, 40, by = 5)) +
+  scale_color_manual(values = c("#E69F00", "#56B4E9", "#009E73",
+                         "#F0E442", "#0072B2", "#D55E00", "#CC79A7"))
+```
+
+---
+
+# Colors
+
+```{r colors, fig.height = 3, fig.align='center', dpi = 300}
+p <- ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(color = drv))
+p1 <- p + scale_color_brewer(palette = "Set1")
+
+library(wesanderson)
+p2 <- p + scale_color_manual(values = wes_palette("GrandBudapest1"))
+
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+---
+
+# Legends
+
+```{r legends, fig.height = 3, fig.align='center', dpi = 300}
+p <- ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(colour = class))
+
+# p + theme(legend.position = "right") # the default
+# p + theme(legend.position = "left")
+# p + theme(legend.position = "top")
+p + theme(legend.position = "bottom")
+```
+
+---
+
+# Saving the plot
+
+```{r saving, eval = F}
+p <- ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth(se = FALSE, method = "lm") +
+  theme_bw()
+
+# save the ggplot under the working directory
+ggsave(p, "my-plot.pdf",
+       width = 6, height = 8,
+       dpi = 600)
+```
+
+---
+class: middle, center
+
+# `ggplot2` to `plotly`
+
+## 📊 ➡ 🔀
+
+---
+
+# Install the `plotly` package
+
+```{r}
+# install.packages("plotly")
+
+library(plotly)
+```
+
+.center[
+### Watch out for the masked functions!
+]
+
+---
+
+# Create a ggplot first
+.font8[
+```{r, fig.height = 3, fig.align='center', dpi = 300}
+# Sample 1000 rows (the random seed makes the sampling reproducible)
+set.seed(100)
+d <- diamonds %>% sample_n(1000)
+
+p <- ggplot(data = d, aes(x = carat, y = price)) +
+  geom_point(aes(text = paste("Clarity:", clarity)), size = 4) +
+  geom_smooth(aes(colour = cut, fill = cut)) + 
+  facet_wrap(~ cut)
+p
+```
+]
+
+---
+# Create a `ggplotly` plot
+
+```{r, fig.height = 5, fig.width = 10, fig.align='center', message = F}
+ggplotly(p)
+```
+
+---
+
+# `plotly` plot is a list 
+```{r}
+names(p)
+```
+
+---
+
+# Try `ggplotly` with a time-series dataset
+
+```{r, fig.height = 4, fig.width = 10, fig.align='center', message = F}
+# install.packages("forecast")
+
+p <- ggplot(fortify(forecast::gold), aes(x, y)) + 
+  geom_line()
+
+ggplotly(p) %>% layout(dragmode = "pan")
+```
+
+---
+
+# Directly build a `plotly` plot
+
+```{r, fig.height = 4, fig.width = 10}
+plot_ly(mpg, x = ~hwy, color = ~drv, type = "box")
+```
+
+Tuning `plotly` for your specific task can be time-consuming.
+
+Please refer to the official website (https://plotly.com/r/plotly-fundamentals/) for guidance.
+
+---
+
+# Exercise 5
+
+- Take any ggplot that you have built above and change it to a `plotly` plot. Do you find the interactive plot more useful than the static plot?
+
+---
+class: middle, center
+
+# A primer on R `shiny`
+
+## 📊 ➡ 🔀 ➡ 🌐
+
+---
+
+# Install the `shiny` package
+
+```{r, eval = F}
+# install.packages("shiny")
+
+library(shiny)
+```
+
+---
+
+# UI (User Interface)
+
+```{r, eval = F}
+# User Interface
+ui <- fluidPage(
+  selectInput("xVariable", "X-axis variable:",
+              choices = c("displ", "hwy", "cty", "cyl"), 
+              selected = "displ"),
+  selectInput("yVariable", "Y-axis variable:",
+              choices = c("hwy", "cty", "cyl", "displ"), 
+              selected = "hwy"),
+  selectInput("colorVariable", "Color points by:",
+              choices = c("class", "drv", "fl"), 
+              selected = "class"),
+  plotlyOutput("mpgPlot")
+)
+```
+
+---
+
+# Server
+
+```{r, eval = F}
+# Server logic
+server <- function(input, output) {
+  output$mpgPlot <- renderPlotly({
+    p <- ggplot(mpg, 
+                aes(x = .data[[input$xVariable]], 
+                    y = .data[[input$yVariable]],
+                    color = .data[[input$colorVariable]])) +
+      geom_point() + 
+      theme_minimal()
+    
+    ggplotly(p)
+  })
+}
+```
+
+
+---
+
+# Define the App
+
+```{r, eval = F}
+# Run the application 
+shinyApp(ui = ui, server = server)
+```
+
+---
+
+# Running the App 
+
+Store your ui, server, and shinyApp in an R script called `app.R` in a folder called my_app in your working directory, you can create the shiny website by running the line below.
+
+Or you can just click on "Run App" at the right side of the lower tool bar.
+
+```{r, eval = F}
+runApp("my_app")
+```
+
+---
+
+# A list of examples
+
+```{r, eval = F}
+runExample("01_hello")      # a histogram
+runExample("02_text")       # tables and data frames
+runExample("03_reactivity") # a reactive expression
+runExample("04_mpg")        # global variables
+runExample("05_sliders")    # slider bars
+runExample("06_tabsets")    # tabbed panels
+runExample("07_widgets")    # help text and submit buttons
+runExample("08_html")       # Shiny app built from HTML
+runExample("09_upload")     # file upload wizard
+runExample("10_download")   # file download wizard
+runExample("11_timer")      # an automated timer
+```
+
+.center[
+## Let's learn these in future workshops.
+## Or just ask ChatGPT!
+]
