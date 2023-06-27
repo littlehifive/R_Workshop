@@ -327,13 +327,35 @@ dat &lt;- read_csv(here("data/RCT.csv"))
 ```
 
 ```
-## Rows: 1000 Columns: 6
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: ","
+## 
+                                                                       
+Rows: 1000 Columns: 6
+## [36mℹ[39m Rendering ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.Rmd[34minst/slides/01-import-wrangle.Rmd[39m]8;; into ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.html[32minst/slides/01-imp[39m]8;;…
+## 
+                                                                       
+## [36mℹ[39m Rendering ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.Rmd[34minst/slides/01-import-wrangle.Rmd[39m]8;; into ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.html[32minst/slides/01-imp[39m]8;;…
+
+                                                                       
+── Column specification ──────────────────────────────────────────────
+## [36mℹ[39m Rendering ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.Rmd[34minst/slides/01-import-wrangle.Rmd[39m]8;; into ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.html[32minst/slides/01-imp[39m]8;;…
+
+                                                                       
+Delimiter: ","
 ## dbl (6): sch_id, st_id, treated, age, female, std_scores
 ## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+## [36mℹ[39m Rendering ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.Rmd[34minst/slides/01-import-wrangle.Rmd[39m]8;; into ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.html[32minst/slides/01-imp[39m]8;;…
+## 
+                                                                       
+## 
+## [36mℹ[39m Rendering ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.Rmd[34minst/slides/01-import-wrangle.Rmd[39m]8;; into ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.html[32minst/slides/01-imp[39m]8;;…
+
+                                                                       
+ℹ Use `spec()` to retrieve the full column specification for this data.
+## [36mℹ[39m Rendering ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.Rmd[34minst/slides/01-import-wrangle.Rmd[39m]8;; into ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.html[32minst/slides/01-imp[39m]8;;…
+
+                                                                       
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+## [36mℹ[39m Rendering ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.Rmd[34minst/slides/01-import-wrangle.Rmd[39m]8;; into ]8;;file:///Users/michaelfive/Desktop/R Directory/R_Workshop/inst/slides/01-import-wrangle.html[32minst/slides/01-imp[39m]8;;…
 ```
 
 ---
@@ -758,16 +780,6 @@ The tidyverse (mainly **dplyr**, but a couple other packages) refers to variable
 
 
 
-&lt;code class ='r hljs remark-code'&gt;summarize(dat, avg_score = mean(&lt;span style="background-color:#ffff7f"&gt;std_scores&lt;/span&gt;))&lt;/code&gt;
-
-```
-
-## # A tibble: 1 × 1
-##   avg_score
-##       &lt;dbl&gt;
-## 1    -0.352
-
-```
 
 .footnote[
 [1]: In computer science lingo, these are technically called _quoted symbols_, but that can be confusing.
@@ -803,13 +815,6 @@ To access dataset variables outside of tidyverse functions, you must use the **`
 
 
 
-&lt;code class ='r hljs remark-code'&gt;mean(&lt;span style="background-color:#ffff7f"&gt;dat$&lt;/span&gt;std_scores)&lt;/code&gt;
-
-```
-
-## [1] -0.3519772
-
-```
 
 Just keep this in mind!
 
@@ -953,11 +958,6 @@ dat %&gt;%
   summarize(avg_scores = mean(std_scores))
 ```
 
-
-```
-## `summarise()` has grouped output by 'treated'. You can override using the
-## `.groups` argument.
-```
 
 ```
 ## # A tibble: 4 × 3
