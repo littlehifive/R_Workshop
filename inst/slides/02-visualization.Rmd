@@ -260,7 +260,7 @@ ggplot(data = mpg) +
 
 ---
 
-# What are the points red instead of blue?
+# Why are the points red instead of blue?
 
 ```{r aesthetic mapping note 2, fig.height = 3, fig.align='center', dpi = 300}
 ggplot(data = mpg) + 
@@ -302,7 +302,7 @@ sapply(mpg, class)
 
 - Plot for each level of a variable: `facet_wrap()`
 
-- Plot for each level of a combination of two variables: `facet_wrap()`
+- Plot for each level of a combination of two variables: `facet_grid()`
 
 - Combine two or more plots by row/column: `gridExtra::grid.arrange()`
 
@@ -529,6 +529,18 @@ ggplot() +
 
 # Coordinate System
 
+- `coord_flip()`
+
+- `coord_polar()`
+
+- `labs(x = ..., y = ...)`
+
+- `theme()`
+
+---
+
+# Coordinate System
+
 .pull-left[
 .font10[
 ```{r, fig.height = 6, fig.align='center', dpi = 300}
@@ -551,18 +563,6 @@ ggplot(data = mpg,
 ```
 ]
 ]
-
----
-
-# Coordinate System
-
-- `coord_flip()`
-
-- `coord_polar()`
-
-- `labs(x = ..., y = ...)`
-
-- `theme()`
 
 ---
 
@@ -777,6 +777,8 @@ class: middle, center
 # install.packages("shiny")
 
 library(shiny)
+library(ggplot2)
+library(plotly)
 ```
 
 ---

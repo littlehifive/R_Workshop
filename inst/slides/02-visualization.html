@@ -301,7 +301,7 @@ ggplot(data = mpg) +
 
 ---
 
-# What are the points red instead of blue?
+# Why are the points red instead of blue?
 
 
 ```r
@@ -346,7 +346,7 @@ sapply(mpg, class)
 
 - Plot for each level of a variable: `facet_wrap()`
 
-- Plot for each level of a combination of two variables: `facet_wrap()`
+- Plot for each level of a combination of two variables: `facet_grid()`
 
 - Combine two or more plots by row/column: `gridExtra::grid.arrange()`
 
@@ -618,6 +618,18 @@ ggplot() +
 
 # Coordinate System
 
+- `coord_flip()`
+
+- `coord_polar()`
+
+- `labs(x = ..., y = ...)`
+
+- `theme()`
+
+---
+
+# Coordinate System
+
 .pull-left[
 .font10[
 
@@ -646,18 +658,6 @@ ggplot(data = mpg,
 &lt;img src="02-visualization_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
 ]
 ]
-
----
-
-# Coordinate System
-
-- `coord_flip()`
-
-- `coord_polar()`
-
-- `labs(x = ..., y = ...)`
-
-- `theme()`
 
 ---
 
@@ -942,6 +942,8 @@ class: middle, center
 # install.packages("shiny")
 
 library(shiny)
+library(ggplot2)
+library(plotly)
 ```
 
 ---
