@@ -50,11 +50,10 @@ basics just to get you started:
 2.  Once installed, open Github Desktop, navigate to the menu, and
     select `File > Clone Repository...`.
 3.  In the dialog box that pops up, select the "URL"" tab, and put
-    “Global-TIES-for-Children/workshops” into the “Repository URL or
+    “littlehifive/R_Workshop” into the “Repository URL or
     GitHub username and repository” field. Choose whichever local path
     that you want.
-
-![Clone repository box](man/figures/clone-repository.png)
+4.  You can also navigate to the workshop repository, click Code, and click Open with Github Desktop.
 
 ## 2 - Get Set Up
 
