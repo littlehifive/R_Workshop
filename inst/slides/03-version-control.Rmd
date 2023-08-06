@@ -1,0 +1,124 @@
+---
+title: "Session 3"
+subtitle: "Version Control with Github Desktop"
+author: "Youth Impact R Workshop Series"
+institute: "Zezhen Wu"
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      countIncrementalSlides: false
+      highlightLines: true
+      highlightStyle: solarized-light
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, cache = T)
+options(htmltools.dir.version = FALSE)
+library(xaringanthemer)
+library(magrittr)
+library(flair)
+library(tidyverse)
+# xaringan::inf_mr()
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+# style_mono_accent(
+#   text_font_google = google_font("Montserrat", "300", "300i"),
+#   code_font_google = google_font("Fira Mono")
+# )
+style_mono_accent(
+  base_color = "#1c5253",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "300", "300i"),
+  code_font_google   = google_font("Fira Mono")
+)
+```
+
+<style>
+:root {
+  --font12: 12pt;
+  --font10: 10pt;
+  --font8: 8pt;
+}
+
+.font12 > table {
+  font-size: var(--font12);
+}
+
+.font12 > p {
+  font-size: var(--font12);
+}
+
+.font12 > pre .remark-code-line {
+  font-size: var(--font12);
+}
+
+.font10 > table {
+  font-size: var(--font10);
+}
+
+.font10 > p {
+  font-size: var(--font10);
+}
+
+.font10 > pre .remark-code-line {
+  font-size: var(--font10);
+}
+
+.font8 > table {
+  font-size: var(--font8);
+}
+
+.font8 > p {
+  font-size: var(--font8);
+}
+
+.font8 > pre .remark-code-line {
+  font-size: var(--font8);
+}
+
+.aligncenter {
+    text-align: center;
+}
+
+</style>
+
+# Agenda
+
+- Understanding git
+
+- Using the GitHub Desktop software to execute version control for your coding project (whether it is Stata or R)
+
+- Using git in Rstudio
+
+---
+
+# Learning tools
+
+- A chapter on version control in ["An Introduction to R"](https://intro2r.com/github_r.html)
+
+- [Getting started with GitHub Desktop](https://docs.github.com/en/desktop/installing-and-configuring-github-desktop/overview/getting-started-with-github-desktop)
+
+---
+
+# What is Version Control?
+
+.pull-left[
+
+A Version Control System (VCS) keeps a record of all the changes you make to your files that make up a particular project and allows you to revert to previous versions of files if you need to. 
+
+****
+
+**Think about a Word Doc that tracks each sentence that you write and allows you to go back to previous versions of the SAME document, WITHOUT the need to create multiple documents.**
+]
+
+.pull-right[
+<img src="../../man/figures/final_doc.png" height="450">
+]
+
+---
+
+# Why use Version Control?
+
+
