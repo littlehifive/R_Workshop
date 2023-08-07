@@ -117,7 +117,271 @@ A Version Control System (VCS) keeps a record of all the changes you make to you
 
 # Why use Version Control?
 
+- **Collaboration**: Enables multiple teammates to work on a project
 
+- **Tracking Changes**: Keeps a history of who made what changes
+
+- **Reverting**: Ability to undo changes, restoring previous versions
+
+- **Conflict Resolution**: Helps in resolving conflicting changes
+
+- **Enhanced Workflow**: Tailors to different development workflows
+
+---
+
+# What is Git and GitHub?
+
+.pull-left[
+## Git
+
+- Git is a distributed version control system that tracks changes in any set of computer files.
+
+- All the files that make up a project is called a *repository*.
+]
+
+.pull-right[
+## GitHub
+
+- GitHub is a web-based hosting service for Git repositories which allows you to create a remote copy of your local version-controlled project.
+]
+
+.aligncenter[
+&lt;img src="../../man/figures/git_workflow.png" height="230"&gt;
+]
+
+---
+
+# Basic Git Operations 
+
+- Committing Changes
+
+- Pushing to Remote Repositories
+
+- Pulling from Remote Repositories
+
+- Branching and Merging
+
+****
+
+**Note: **
+
+- You can do the above operations by writing Git commands in Terminal, which can be somewhat difficult to learn if you are new to programming.
+
+- An easier way is to use Github Desktop: https://desktop.github.com/, which allows you to click a few buttons, instead of writing commands like `git commit` in Terminal.
+
+---
+
+# Git Workflow
+
+.aligncenter[
+&lt;img src="../../man/figures/git_workflow_full.png" height="450"&gt;
+]
+
+.font10[
+
+Source: https://dev.to/mollynem/git-github--workflow-fundamentals-5496
+
+]
+
+---
+
+# Using GitHub Desktop
+
+1. Create an account on https://github.com/
+2. Download GitHub Desktop on https://desktop.github.com/
+
+.aligncenter[
+&lt;img src="../../man/figures/github_desktop.png" height="400"&gt;
+]
+
+---
+
+# 1. Create your own repository
+
+.pull-left[
+&lt;img src="../../man/figures/create_repo_1.png" height="200"&gt;
+
+Make sure you check "Add a README file", otherwise the repo is empty and GitHub will ask you to add at least one file to the repo.
+
+A README file is usually a markdown file (README.md) that is used for describing the repo.
+]
+
+.pull-right[
+&lt;img src="../../man/figures/create_repo_2.png" height="400"&gt;
+]
+
+---
+
+# 2. Clone the repository
+
+.aligncenter[
+&lt;img src="../../man/figures/clone_repo_1.png" height="300"&gt;
+]
+
+.aligncenter[
+&lt;img src="../../man/figures/clone_repo_2.png" height="200"&gt;
+]
+
+---
+
+# 3. Make changes
+
+- Open README.md using any text editor on your computer
+
+- Add a sentence and save the document
+
+.aligncenter[
+&lt;img src="../../man/figures/commit_changes_1.png" height="300"&gt;
+]
+
+---
+
+# 4. Commit changes to `main`
+
+.aligncenter[
+&lt;img src="../../man/figures/commit_changes_2.png" height="500"&gt;
+]
+
+---
+
+# 5. Commit changes to `origin`
+
+.aligncenter[
+&lt;img src="../../man/figures/push_changes.png" height="500"&gt;
+]
+
+---
+
+# 6. See changes on GitHub
+
+.aligncenter[
+&lt;img src="../../man/figures/see_changes_1.png" height="300"&gt;
+]
+
+---
+
+# Branching
+
+- Branching is about creating parallel changes without affecting the `main`.
+
+- You can use `pull request` to merge branches.
+
+.aligncenter[
+&lt;img src="../../man/figures/branching_cartoon.png" height="400"&gt;
+]
+
+---
+
+# 7. Create a branch
+
+.pull-left[
+&lt;img src="../../man/figures/branch_1.png" height="200"&gt;
+]
+
+.pull-right[
+&lt;img src="../../man/figures/branch_2.png" height="200"&gt;
+]
+
+.aligncenter[
+&lt;img src="../../man/figures/branch_3.png" height="300"&gt;
+]
+
+---
+
+# 8. Publish the branch
+.aligncenter[
+&lt;img src="../../man/figures/publish_branch_1.png" height="50"&gt;
+]
+
+.aligncenter[
+&lt;img src="../../man/figures/publish_branch_2.png" height="200"&gt;
+]
+
+.aligncenter[
+&lt;img src="../../man/figures/publish_branch_3.png" height="50"&gt;
+]
+
+---
+
+# 9. Pull request
+
+.aligncenter[
+&lt;img src="../../man/figures/pull_request_1.png" height="80"&gt;
+]
+
+.aligncenter[
+&lt;img src="../../man/figures/pull_request_2.png" height="400"&gt;
+]
+
+---
+
+# 10. Merge pull request
+
+.aligncenter[
+&lt;img src="../../man/figures/merge_pull_request.png" height="500"&gt;
+]
+
+---
+
+# 11. See changes on GitHub
+
+.aligncenter[
+&lt;img src="../../man/figures/see_changes_2.png" height="300"&gt;
+]
+
+---
+
+# What if there are conflicts?
+
+.pull-left[
+&lt;img src="../../man/figures/pull_request_conflict_1.png" height="300"&gt;
+]
+
+.pull-right[
+&lt;img src="../../man/figures/pull_request_conflict_2.png" height="200"&gt;
+]
+
+.aligncenter[
+&lt;img src="../../man/figures/pull_request_conflict_3.png" height="100"&gt;
+]
+
+---
+
+# Resolving conflicts
+
+.aligncenter[
+&lt;img src="../../man/figures/resolve_conflict_1.png" height="100"&gt;
+]
+
+.aligncenter[
+&lt;img src="../../man/figures/resolve_conflict_2.png" height="150"&gt;
+]
+
+****
+
+- Depending on which programming language you are using, you can choose the code editor to resolve these conflicts on your own branch.
+
+- Usually a more senior data manager checks code conflicts and make the executive decision to resolve conflicts and merge.
+
+---
+
+# Why do this at Youth Impact?
+
+- Multiple people can work on Stata/R codes for a same project at the same time.
+
+- You have a clean history of why certain changes are made to certain .do files or R script.
+
+- You can go back in time and restore certain commits if recent commits don't work properly.
+
+- Codes are stored separately from data files, so that codes are open-sourced and reproducible, while data files (on Dropbox) can be private unless made public.
+
+---
+
+# Bonus: Reverting a commit
+
+.aligncenter[
+&lt;img src="../../man/figures/revert_commit.png" height="500"&gt;
+]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
