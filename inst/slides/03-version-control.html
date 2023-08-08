@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide
 # Session 3
 ]
 .subtitle[
-## Version Control with Github Desktop
+## Version Control with GitHub Desktop
 ]
 .author[
 ### Youth Impact R Workshop Series
@@ -165,9 +165,9 @@ A Version Control System (VCS) keeps a record of all the changes you make to you
 
 **Note: **
 
-- You can do the above operations by writing Git commands in Terminal, which can be somewhat difficult to learn if you are new to programming.
+- You can do the above operations by writing Git commands in a command line tool (e.g., Terminal on Mac or PowerShell on Windows), after [installing git](https://github.com/git-guides/install-git), which can be somewhat difficult to learn if you are new to programming.
 
-- An easier way is to use Github Desktop: https://desktop.github.com/, which allows you to click a few buttons, instead of writing commands like `git commit` in Terminal.
+- An alternative way is to use Github Desktop: https://desktop.github.com/, which allows you to click a few buttons in a visual interface, together with the option to writing commands like `git commit` in a command line tool.
 
 ---
 
@@ -224,7 +224,7 @@ A README file is usually a markdown file (README.md) that is used for describing
 
 ---
 
-# 3. Make changes
+# 3. Make changes to a file
 
 - Open README.md using any text editor on your computer
 
@@ -244,7 +244,7 @@ A README file is usually a markdown file (README.md) that is used for describing
 
 ---
 
-# 5. Commit changes to `origin`
+# 5. Push changes to `origin`
 
 .aligncenter[
 &lt;img src="../../man/figures/push_changes.png" height="500"&gt;
@@ -367,13 +367,63 @@ A README file is usually a markdown file (README.md) that is used for describing
 
 # Why do this at Youth Impact?
 
+--
+
 - Multiple people can work on Stata/R codes for a same project at the same time.
+
+--
 
 - You have a clean history of why certain changes are made to certain .do files or R script.
 
+--
+
 - You can go back in time and restore certain commits if recent commits don't work properly.
 
+--
+
 - Codes are stored separately from data files, so that codes are open-sourced and reproducible, while data files (on Dropbox) can be private unless made public.
+
+--
+
+****
+
+### Do not use git together with cloud storage for the same project files!
+
+--
+
+Cloud storage services automatically sync files, which can lead to conflicts with Git's own version control mechanisms.
+
+---
+
+# Recommended steps for Youth Impact
+
+--
+
+- Use git and GitHub for version control with any code (including Stata .do files, R scripts, markdown files, R markdown files, etc.)
+
+  - For instance, see the [dashboard repository](https://github.com/youth-impact/dashboard) that Jake made
+  
+  - Avoid putting any codes on cloud drives, especially when collaborating with others on coding
+
+--
+
+- DO NOT push data files to GitHub, store them on Dropbox/Google Drive instead
+
+--
+
+- Create centralized data-only folders on Dropbox, in lieu of project folders where data folders are sub-folders
+
+--
+
+- Create unified file and data variable naming rules across projects
+
+--
+
+- Include a README for each project and data folder
+
+--
+
+- Automate data cleaning as much as possible (check out the [`targets` package](https://books.ropensci.org/targets/))
 
 ---
 
@@ -382,6 +432,60 @@ A README file is usually a markdown file (README.md) that is used for describing
 .aligncenter[
 &lt;img src="../../man/figures/revert_commit.png" height="500"&gt;
 ]
+
+---
+
+# Bonus: Fork a project
+
+.aligncenter[
+&lt;img src="../../man/figures/fork_project.png" height="500"&gt;
+]
+
+---
+
+# Bonus: Pull from GitHub
+
+.aligncenter[
+&lt;img src="../../man/figures/pull_origin.png" height="500"&gt;
+]
+
+---
+
+# Bonus: Network graph
+
+.aligncenter[
+&lt;img src="../../man/figures/network_graph.png" height="300"&gt;
+]
+
+---
+
+# Bonus: Using git in R Studio
+
+- You may need to configure R Studio to get the Git tab in an R project. 
+
+- See tutorials [here](https://jennybc.github.io/2014-05-12-ubc/ubc-r/session03_git.html) and [here](https://sites.northwestern.edu/researchcomputing/resources/using-git-and-github-with-r-rstudio/).
+
+.aligncenter[
+&lt;img src="../../man/figures/rstudio_git.png" height="300"&gt;
+]
+
+---
+
+# Bonus: Using git for Stata do files
+
+- Check out this full tutorial [here](https://medium.com/the-stata-guide/stata-and-github-integration-8c87ddf9784a).
+
+- .do file is just another text file, so git is able to track changes in do files line by line.
+
+- All the steps that we learned today (commit, push, pull, etc.) are the same for text files including Stata do files.
+
+---
+
+# Bonus: An example data cleaning project
+
+- See [this github repository](https://github.com/littlehifive/dads_matter_cleaning) for how I structured a data cleaning project using `tidyverse` and `targets` and version controlled by git.
+
+- A streamlined data cleaning project involves [functional programming](http://adv-r.had.co.nz/Functional-programming.html), which requires putting every little steps into little functions, little functions into bigger functions, and bigger functions into building blocks of a data pipeline.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

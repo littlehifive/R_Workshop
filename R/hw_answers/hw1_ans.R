@@ -50,4 +50,6 @@ dat |>
 dat_s <- dat |> 
   select(-st_id) |> 
   filter(age >= 10) |> 
-  mutate(transformed_scores = ifelse(age >= 10, std_scores * 99, std_scores * 101))
+  mutate(transformed_scores = ifelse(age >= 10, 
+                                     std_scores * 99, 
+                                     std_scores * 101))
